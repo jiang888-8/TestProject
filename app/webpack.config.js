@@ -1,12 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    index: './src/index.js',
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
-    publicPath: './',
+    filename: '[name].bundle.js',
+    // publicPath: './',
     clean: true,
   },
   module: {
@@ -17,7 +20,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
+            presets: ['@babel/preset-env'],
           },
         },
       },
@@ -26,7 +29,11 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        test: /\.(png|jpg|jpeg|gif|svg)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
       },
     ],
@@ -42,4 +49,8 @@ module.exports = {
     },
     open: true,
   },
+  optimization: {
+    runtimeChunk: 'single',
+  },
+  mode: isProduction ? 'production' : 'development',
 };
